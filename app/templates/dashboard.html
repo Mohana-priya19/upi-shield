@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="page-header">
+    <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+    <p>Live model performance and system health for UPI Shield.</p>
+</section>
+
+<section class="metrics-grid">
+    <div class="metric-card">
+        <span class="metric-icon"><i class="fas fa-bullseye"></i></span>
+        <span class="metric-value">{{ roc_auc|default("0.9986") }}</span>
+        <span class="metric-label">ROC-AUC</span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-icon"><i class="fas fa-shield-alt"></i></span>
+        <span class="metric-value">{{ fraud_recall|default("98.2%") }}</span>
+        <span class="metric-label">Fraud Recall</span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-icon"><i class="fas fa-crosshairs"></i></span>
+        <span class="metric-value">{{ pr_auc|default("0.9713") }}</span>
+        <span class="metric-label">PR-AUC</span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-icon"><i class="fas fa-clock"></i></span>
+        <span class="metric-value">{{ last_updated|default("Just now") }}</span>
+        <span class="metric-label">Last Retrained</span>
+    </div>
+</section>
+
+<section class="dashboard-row">
+    <div class="panel drift-panel">
+        <h2>Data Drift Status</h2>
+        <div class="drift-status {{ drift_class|default('status-ok') }}">
+            <i class="fas fa-circle"></i>
+            <span>{{ drift_status|default("No significant drift detected") }}</span>
+        </div>
+        <ul class="drift-features">
+            {% for feature in drift_features|default([
+                {"name": "amount", "score": "0.02", "flagged": false},
+                {"name": "oldbalanceOrg", "score": "0.05", "flagged": false},
+                {"name": "type", "score": "0.31", "flagged": true}
+            ]) %}
+            <li class="{{ 'flagged' if feature.flagged else '' }}">
+                <span>{{ feature.name }}</span>
+                <span>{{ feature.score }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="panel volume-panel">
+        <h2>Transaction Volume</h2>
+        <canvas id="volumeChart" height="220"></canvas>
+    </div>
+</section>
+
+<section class="panel recent-panel">
+    <h2>Recent Transactions</h2>
+    <table class="txn-table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for txn in recent_transactions|default([
+                {"time": "10:42", "type": "TRANSFER", "amount": "₹4,200", "status": "flagged"},
+                {"time": "10:41", "type": "CASH_OUT", "amount": "₹1,050", "status": "normal"},
+                {"time": "10:39", "type": "PAYMENT", "amount": "₹320", "status": "normal"}
+            ]) %}
+            <tr>
+                <td>{{ txn.time }}</td>
+                <td>{{ txn.type }}</td>
+                <td>{{ txn.amount }}</td>
+                <td><span class="badge badge-{{ txn.status }}">{{ txn.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+    const ctx = document.getElementById('volumeChart');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ volume_labels|default(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'])|tojson }},
+            datasets: [{
+                label: 'Transactions',
+                data: {{ volume_data|default([1200, 1900, 1700, 2100, 2400, 1800, 1500])|tojson }},
+                backgroundColor: '#3b82f6'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+{% endblock %}

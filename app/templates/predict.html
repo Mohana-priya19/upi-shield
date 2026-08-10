@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="page-header">
+    <h1><i class="fas fa-search"></i> Detect Fraud</h1>
+    <p>Enter transaction details to check for anomalies in real time.</p>
+</section>
+
+<section class="predict-layout">
+    <div class="panel form-panel">
+        <form action="/predict_page" method="POST" class="predict-form">
+            <div class="form-group">
+                <label for="type">Transaction Type</label>
+                <select name="type" id="type" required>
+                    <option value="PAYMENT">PAYMENT</option>
+                    <option value="TRANSFER">TRANSFER</option>
+                    <option value="CASH_OUT">CASH_OUT</option>
+                    <option value="CASH_IN">CASH_IN</option>
+                    <option value="DEBIT">DEBIT</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Amount (₹)</label>
+                <input type="number" step="0.01" name="amount" id="amount" placeholder="e.g. 4200.00" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="oldbalanceOrg">Sender Balance Before</label>
+                    <input type="number" step="0.01" name="oldbalanceOrg" id="oldbalanceOrg" placeholder="e.g. 10000.00" required>
+                </div>
+                <div class="form-group">
+                    <label for="newbalanceOrig">Sender Balance After</label>
+                    <input type="number" step="0.01" name="newbalanceOrig" id="newbalanceOrig" placeholder="e.g. 5800.00" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="oldbalanceDest">Receiver Balance Before</label>
+                    <input type="number" step="0.01" name="oldbalanceDest" id="oldbalanceDest" placeholder="e.g. 0.00" required>
+                </div>
+                <div class="form-group">
+                    <label for="newbalanceDest">Receiver Balance After</label>
+                    <input type="number" step="0.01" name="newbalanceDest" id="newbalanceDest" placeholder="e.g. 4200.00" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                <i class="fas fa-shield-alt"></i> Check Transaction
+            </button>
+        </form>
+    </div>
+
+    <div class="panel result-panel">
+        {% if prediction is defined %}
+        <div class="result-box {{ 'result-fraud' if prediction == 1 else 'result-normal' }}">
+            <i class="fas {{ 'fa-triangle-exclamation' if prediction == 1 else 'fa-circle-check' }}"></i>
+            <h2>{{ "Fraud Detected" if prediction == 1 else "Transaction Looks Normal" }}</h2>
+            <p class="confidence">Confidence: {{ confidence|default("—") }}</p>
+
+            {% if shap_values is defined %}
+            <div class="shap-explanation">
+                <h3>Why?</h3>
+                <ul>
+                    {% for item in shap_values %}
+                    <li>
+                        <span>{{ item.feature }}</span>
+                        <span class="{{ 'push-fraud' if item.impact > 0 else 'push-normal' }}">
+                            {{ "%.3f"|format(item.impact) }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="result-placeholder">
+            <i class="fas fa-magnifying-glass-chart"></i>
+            <p>Fill in the form and submit to see the fraud prediction here.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

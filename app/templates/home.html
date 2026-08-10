@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-content">
+        <span class="hero-eyebrow">Real-time UPI fraud detection</span>
+        <h1>Catch fraud before it clears.</h1>
+        <p class="hero-sub">
+            UPI Shield pairs a supervised XGBoost model with an unsupervised Isolation Forest
+            to flag anomalous transactions instantly — then keeps watching for drift so the
+            model doesn't go stale.
+        </p>
+        <div class="hero-actions">
+            <a href="/predict_page" class="btn btn-primary">
+                <i class="fas fa-search"></i> Check a Transaction
+            </a>
+            <a href="/dashboard" class="btn btn-outline">
+                <i class="fas fa-chart-line"></i> View Dashboard
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="stats-strip">
+    <div class="stat-card">
+        <span class="stat-value">99.86%</span>
+        <span class="stat-label">ROC-AUC</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">98.2%</span>
+        <span class="stat-label">Fraud Recall</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">97.13%</span>
+        <span class="stat-label">PR-AUC</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">2</span>
+        <span class="stat-label">Model Ensemble</span>
+    </div>
+</section>
+
+<section class="how-it-works">
+    <h2>How it works</h2>
+    <div class="pipeline-row">
+        <div class="pipeline-step">
+            <i class="fas fa-plug"></i>
+            <h3>Ingest</h3>
+            <p>Transaction data flows in from PaySim or manual input.</p>
+        </div>
+        <div class="pipeline-step">
+            <i class="fas fa-brain"></i>
+            <h3>Score</h3>
+            <p>XGBoost + Isolation Forest ensemble flags anomalies.</p>
+        </div>
+        <div class="pipeline-step">
+            <i class="fas fa-chart-area"></i>
+            <h3>Explain</h3>
+            <p>SHAP values show why a transaction was flagged.</p>
+        </div>
+        <div class="pipeline-step">
+            <i class="fas fa-satellite-dish"></i>
+            <h3>Monitor</h3>
+            <p>Evidently AI watches for drift against NPCI benchmarks.</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

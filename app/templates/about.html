@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="page-header">
+    <h1><i class="fas fa-shield-alt"></i> About UPI Shield</h1>
+    <p>Real-time fraud detection built for the scale of UPI.</p>
+</section>
+
+<section class="about-content">
+    <div class="panel about-panel">
+        <h2>The Problem</h2>
+        <p>
+            Rule-based fraud systems miss behavioural patterns fraudsters actively evolve around.
+            Even where machine learning is used, models silently go stale as transaction patterns
+            shift — and most research stops at accuracy, never reaching a deployable pipeline.
+        </p>
+    </div>
+
+    <div class="panel about-panel">
+        <h2>The Approach</h2>
+        <p>
+            UPI Shield combines a supervised XGBoost classifier with an unsupervised Isolation Forest
+            to catch both known fraud patterns and novel anomalies. Every prediction is explained with
+            SHAP, and Evidently AI continuously benchmarks live data against NPCI's official statistics
+            to catch drift before it silently degrades the model.
+        </p>
+    </div>
+
+    <div class="panel about-panel">
+        <h2>Tech Stack</h2>
+        <div class="stack-grid">
+            <span class="stack-tag">XGBoost</span>
+            <span class="stack-tag">Isolation Forest</span>
+            <span class="stack-tag">MLflow</span>
+            <span class="stack-tag">DVC</span>
+            <span class="stack-tag">Flask</span>
+            <span class="stack-tag">Evidently AI</span>
+            <span class="stack-tag">SHAP</span>
+            <span class="stack-tag">Docker</span>
+            <span class="stack-tag">GitHub Actions</span>
+        </div>
+    </div>
+
+    <div class="panel about-panel">
+        <h2>Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <h3>Mohana Priya S</h3>
+                <span>24AD0177 · Data & Modelling Lead</span>
+                <p>EDA, feature engineering, ensemble modelling, MLflow tracking, SHAP explainability.</p>
+            </div>
+            <div class="team-member">
+                <h3>Priyanka V</h3>
+                <span>24AD0224 · MLOps & Deployment Lead</span>
+                <p>API service, Docker, dashboard, CI/CD pipeline, drift monitoring, cloud deployment.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
