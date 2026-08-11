@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">🛡️ AI-Powered Security</div>
+        <h1>UPI Shield</h1>
+        <h2>Fraud Detection System</h2>
+        <p>Real-time UPI transaction fraud detection powered by XGBoost, SHAP Explainability, and MLOps pipeline — protecting millions of digital payments.</p>
+        <div class="hero-buttons">
+            <a href="/predict_page" class="btn-primary">
+                <i class="fas fa-search"></i> Detect Fraud Now
+            </a>
+            <a href="/dashboard" class="btn-secondary">
+                <i class="fas fa-chart-bar"></i> View Dashboard
+            </a>
+        </div>
+    </div>
+    <div class="hero-stats">
+        <div class="stat-card">
+            <h3>0.9986</h3>
+            <p>ROC-AUC Score</p>
+        </div>
+        <div class="stat-card">
+            <h3>98.2%</h3>
+            <p>Fraud Recall</p>
+        </div>
+        <div class="stat-card">
+            <h3>0.24%</h3>
+            <p>False Alarm Rate</p>
+        </div>
+        <div class="stat-card">
+            <h3>2.77M</h3>
+            <p>Transactions Analyzed</p>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <h2>How UPI Shield Works</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-database"></i></div>
+            <h3>Data Engineering</h3>
+            <p>7 domain-specific features engineered from balance draining patterns in 2.77M PaySim transactions.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-brain"></i></div>
+            <h3>Dual Model Detection</h3>
+            <p>XGBoost catches known fraud patterns. Isolation Forest catches novel anomalies. Together they cover every angle.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-eye"></i></div>
+            <h3>SHAP Explainability</h3>
+            <p>Every prediction explained — not just fraud or not fraud, but exactly why the model flagged it.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+            <h3>Drift Monitoring</h3>
+            <p>Evidently AI monitors 13 features in real time. Zero drift detected across all production data.</p>
+        </div>
+    </div>
+</section>
+
+<section class="tech-stack">
+    <h2>Technology Stack</h2>
+    <div class="tech-grid">
+        <div class="tech-item">XGBoost</div>
+        <div class="tech-item">MLflow</div>
+        <div class="tech-item">FastAPI</div>
+        <div class="tech-item">SHAP</div>
+        <div class="tech-item">Evidently AI</div>
+        <div class="tech-item">Scikit-learn</div>
+        <div class="tech-item">Pandas</div>
+        <div class="tech-item">Flask</div>
+    </div>
+</section>
+
+{% endblock %}

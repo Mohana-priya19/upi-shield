@@ -1,88 +1,159 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="page-header">
-    <h1><i class="fas fa-search"></i> Detect Fraud</h1>
-    <p>Enter transaction details to check for anomalies in real time.</p>
-</section>
+<section class="predict-section">
+    <h1>Fraud Detection</h1>
+    <p class="subtitle">Enter transaction details to check for fraud in real time</p>
 
-<section class="predict-layout">
-    <div class="panel form-panel">
-        <form action="/predict_page" method="POST" class="predict-form">
+    <div class="predict-container">
+        <div class="form-card">
+            <h3><i class="fas fa-edit"></i> Transaction Details</h3>
+
             <div class="form-group">
-                <label for="type">Transaction Type</label>
-                <select name="type" id="type" required>
-                    <option value="PAYMENT">PAYMENT</option>
-                    <option value="TRANSFER">TRANSFER</option>
-                    <option value="CASH_OUT">CASH_OUT</option>
-                    <option value="CASH_IN">CASH_IN</option>
-                    <option value="DEBIT">DEBIT</option>
+                <label>Transaction Type</label>
+                <select id="type_encoded">
+                    <option value="0">CASH_OUT</option>
+                    <option value="1">TRANSFER</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="amount">Amount (₹)</label>
-                <input type="number" step="0.01" name="amount" id="amount" placeholder="e.g. 4200.00" required>
+                <label>Transaction Amount (₹)</label>
+                <input type="number" id="amount" placeholder="e.g. 450000">
             </div>
 
-            <div class="form-row">
+            <div class="form-grid">
                 <div class="form-group">
-                    <label for="oldbalanceOrg">Sender Balance Before</label>
-                    <input type="number" step="0.01" name="oldbalanceOrg" id="oldbalanceOrg" placeholder="e.g. 10000.00" required>
+                    <label>Origin Balance Before (₹)</label>
+                    <input type="number" id="oldbalanceOrg" placeholder="e.g. 450000">
                 </div>
                 <div class="form-group">
-                    <label for="newbalanceOrig">Sender Balance After</label>
-                    <input type="number" step="0.01" name="newbalanceOrig" id="newbalanceOrig" placeholder="e.g. 5800.00" required>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="oldbalanceDest">Receiver Balance Before</label>
-                    <input type="number" step="0.01" name="oldbalanceDest" id="oldbalanceDest" placeholder="e.g. 0.00" required>
-                </div>
-                <div class="form-group">
-                    <label for="newbalanceDest">Receiver Balance After</label>
-                    <input type="number" step="0.01" name="newbalanceDest" id="newbalanceDest" placeholder="e.g. 4200.00" required>
+                    <label>Origin Balance After (₹)</label>
+                    <input type="number" id="newbalanceOrig" placeholder="e.g. 0">
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-full">
-                <i class="fas fa-shield-alt"></i> Check Transaction
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Destination Balance Before (₹)</label>
+                    <input type="number" id="oldbalanceDest" placeholder="e.g. 0">
+                </div>
+                <div class="form-group">
+                    <label>Destination Balance After (₹)</label>
+                    <input type="number" id="newbalanceDest" placeholder="e.g. 450000">
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Hour of Transaction (0-23)</label>
+                    <input type="number" id="hour" placeholder="e.g. 3" min="0" max="23">
+                </div>
+                <div class="form-group">
+                    <label>Day</label>
+                    <input type="number" id="day" placeholder="e.g. 1" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Is Weekend?</label>
+                <select id="is_weekend">
+                    <option value="0">No (Weekday)</option>
+                    <option value="1">Yes (Weekend)</option>
+                </select>
+            </div>
+
+            <button class="predict-btn" onclick="predictFraud()">
+                <i class="fas fa-search"></i> Analyze Transaction
             </button>
-        </form>
-    </div>
+        </div>
 
-    <div class="panel result-panel">
-        {% if prediction is defined %}
-        <div class="result-box {{ 'result-fraud' if prediction == 1 else 'result-normal' }}">
-            <i class="fas {{ 'fa-triangle-exclamation' if prediction == 1 else 'fa-circle-check' }}"></i>
-            <h2>{{ "Fraud Detected" if prediction == 1 else "Transaction Looks Normal" }}</h2>
-            <p class="confidence">Confidence: {{ confidence|default("—") }}</p>
-
-            {% if shap_values is defined %}
-            <div class="shap-explanation">
-                <h3>Why?</h3>
-                <ul>
-                    {% for item in shap_values %}
-                    <li>
-                        <span>{{ item.feature }}</span>
-                        <span class="{{ 'push-fraud' if item.impact > 0 else 'push-normal' }}">
-                            {{ "%.3f"|format(item.impact) }}
-                        </span>
-                    </li>
-                    {% endfor %}
-                </ul>
+        <div class="result-card" id="resultCard">
+            <div class="result-placeholder" id="placeholder">
+                <i class="fas fa-shield-alt"></i>
+                <p>Enter transaction details and click Analyze to see the fraud prediction result here.</p>
             </div>
-            {% endif %}
+
+            <div class="loader" id="loader"></div>
+
+            <div class="result-content" id="resultContent">
+                <div class="result-icon" id="resultIcon"></div>
+                <div class="result-verdict" id="resultVerdict"></div>
+                <div style="width:100%">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.3rem">
+                        <span>Fraud Probability</span>
+                        <span id="probText"></span>
+                    </div>
+                    <div class="probability-bar">
+                        <div class="probability-fill" id="probBar" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="risk-badge" id="riskBadge"></div>
+                <div style="margin-top:1.5rem; padding:1rem; background:var(--dark3); border-radius:12px; text-align:left; font-size:0.85rem; color:var(--text-muted);" id="explanation"></div>
+            </div>
         </div>
-        {% else %}
-        <div class="result-placeholder">
-            <i class="fas fa-magnifying-glass-chart"></i>
-            <p>Fill in the form and submit to see the fraud prediction here.</p>
-        </div>
-        {% endif %}
     </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function predictFraud() {
+    const payload = {
+        amount: parseFloat(document.getElementById('amount').value) || 0,
+        oldbalanceOrg: parseFloat(document.getElementById('oldbalanceOrg').value) || 0,
+        newbalanceOrig: parseFloat(document.getElementById('newbalanceOrig').value) || 0,
+        oldbalanceDest: parseFloat(document.getElementById('oldbalanceDest').value) || 0,
+        newbalanceDest: parseFloat(document.getElementById('newbalanceDest').value) || 0,
+        hour: parseInt(document.getElementById('hour').value) || 0,
+        day: parseInt(document.getElementById('day').value) || 1,
+        is_weekend: parseInt(document.getElementById('is_weekend').value),
+        type_encoded: parseInt(document.getElementById('type_encoded').value)
+    };
+
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('resultContent').style.display = 'none';
+    document.getElementById('loader').style.display = 'block';
+
+    const response = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    document.getElementById('loader').style.display = 'none';
+
+    const content = document.getElementById('resultContent');
+    const card = document.getElementById('resultCard');
+    content.style.display = 'flex';
+    content.style.flexDirection = 'column';
+    content.style.alignItems = 'center';
+    content.style.gap = '0.8rem';
+
+    if (data.fraud_detected) {
+        card.className = 'result-card result-fraud';
+        document.getElementById('resultIcon').innerHTML = '🚨';
+        document.getElementById('resultVerdict').textContent = 'FRAUD DETECTED';
+    } else {
+        card.className = 'result-card result-safe';
+        document.getElementById('resultIcon').innerHTML = '✅';
+        document.getElementById('resultVerdict').textContent = 'LEGITIMATE TRANSACTION';
+    }
+
+    document.getElementById('probText').textContent = data.fraud_probability + '%';
+    document.getElementById('probBar').style.width = data.fraud_probability + '%';
+    document.getElementById('riskBadge').textContent = 'Risk Level: ' + data.risk_level;
+    document.getElementById('riskBadge').className = 'risk-badge risk-' + data.risk_level;
+
+    document.getElementById('explanation').innerHTML = `
+        <strong style="color:var(--secondary)">Analysis Summary</strong><br><br>
+        Fraud Probability: <strong>${data.fraud_probability}%</strong><br>
+        Risk Level: <strong>${data.risk_level}</strong><br>
+        Balance Drained: <strong>${payload.newbalanceOrig === 0 ? 'Yes — High Risk Signal' : 'No'}</strong><br>
+        Transaction Hour: <strong>${payload.hour}:00 ${payload.hour >= 0 && payload.hour <= 6 ? '⚠️ Late Night' : '✅ Business Hours'}</strong>
+    `;
+}
+</script>
 {% endblock %}
