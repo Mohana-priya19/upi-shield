@@ -694,7 +694,5 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-
-
 .hero-content { animation: fadeInUp 0.8s ease; }
 .hero-stats { animation: fadeInUp 0.8s ease 0.2s both; }
