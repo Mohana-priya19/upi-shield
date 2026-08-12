@@ -1,38 +1,96 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 import joblib
 import pandas as pd
 import sys
 sys.path.append(r'C:\Users\LENOVO\Downloads\upi-shield')
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'upishield2024secretkey'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
 model = joblib.load(r'C:\Users\LENOVO\Downloads\upi-shield\models\xgboost_baseline.pkl')
 
-FEATURES = [
-    'amount', 'oldbalanceOrg', 'newbalanceOrig',
-    'oldbalanceDest', 'newbalanceDest',
-    'hour', 'day', 'is_weekend', 'type_encoded',
-    'balance_diff_orig', 'balance_diff_dest',
-    'orig_balance_zero', 'amount_deviation'
-]
+# ── User Model ──
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(150), unique=True)
+    password = db.Column(db.String(200))
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# ── Public Routes ──
 @app.route('/')
 def home():
     return render_template('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            return redirect(url_for('predict_page'))
+        flash('Invalid email or password')
+    return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        existing = User.query.filter_by(email=email).first()
+        if existing:
+            flash('Email already registered. Please login.')
+            return redirect(url_for('login'))
+        new_user = User(
+            name=name,
+            email=email,
+            password=generate_password_hash(password)
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+        return redirect(url_for('predict_page'))
+    return render_template('signup.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+# ── Protected Routes ──
 @app.route('/predict_page')
+@login_required
 def predict_page():
     return render_template('predict.html')
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
     return render_template('dashboard.html')
 
 @app.route('/about')
+@login_required
 def about():
     return render_template('about.html')
 
+# ── API ──
 @app.route('/api/predict', methods=['POST'])
+@login_required
 def predict():
     data = request.json
     amount = float(data['amount'])
@@ -79,4 +137,6 @@ def predict():
     })
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True, port=5001)
