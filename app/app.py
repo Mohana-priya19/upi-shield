@@ -41,7 +41,7 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for('predict_page'))
+            return redirect(url_for('about'))
         flash('Invalid email or password')
     return render_template('login.html')
 
@@ -62,8 +62,8 @@ def signup():
         )
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user)
-        return redirect(url_for('predict_page'))
+        flash('Account created! Please login.')
+        return redirect(url_for('login'))
     return render_template('signup.html')
 
 @app.route('/logout')
