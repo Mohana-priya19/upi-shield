@@ -1,18 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="hero">
-    <div class="hero-content">
-        <div class="hero-badge">🔒 Your Transactions Are Protected</div>
-        <h1>Stop Fraud Before It Happens</h1>
-        <h2>Real-time UPI transaction safety check</h2>
-        <p>Every second, fraudsters are finding new ways to steal money through UPI. UPI Shield catches them before your money is gone.</p>
-        <div class="hero-buttons" style="justify-content:center;">
-            <a href="/login" class="btn-primary">
-                <i class="fas fa-sign-in-alt"></i> Login to Get Started
-            </a>
-        </div>
+<section class="hero" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:4rem 2rem; background:radial-gradient(ellipse at top, #1a1a4e 0%, var(--dark) 70%);">
+    
+    <div style="width:120px; height:120px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:3.5rem; margin-bottom:1.5rem; box-shadow:0 0 40px rgba(108,99,255,0.5);">
+        🛡️
     </div>
+
+    <div class="hero-badge">🔒 Your Transactions Are Protected</div>
+    <h1 style="font-size:4rem; font-weight:800; margin:1rem 0; background:linear-gradient(135deg, #ffffff 0%, var(--secondary) 50%, var(--primary) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Stop Fraud Before It Happens</h1>
+    <h2 style="font-size:1.5rem; font-weight:400; color:var(--text-muted); margin-bottom:1rem;">Real-time UPI transaction safety check</h2>
+    <p style="max-width:600px; color:var(--text-muted); font-size:1rem; line-height:1.7; margin-bottom:2.5rem;">Every second, fraudsters are finding new ways to steal money through UPI. UPI Shield catches them before your money is gone.</p>
+    
+    <a href="/login" class="btn-primary" style="font-size:1.1rem; padding:1rem 3rem;">
+        <i class="fas fa-sign-in-alt"></i> Login to Get Started
+    </a>
+
+    <div style="margin-top:2rem; padding:2rem 3rem; background:rgba(108,99,255,0.1); border:1px solid var(--border); border-radius:12px; width:100%; max-width:900px; box-sizing:border-box; min-height:80px;">
+    <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.6; margin:0; text-align:center;"></p>
+        UPI Shield is an AI-powered fraud detection system that analyzes your UPI transactions in real time — built on 2.77 million transaction patterns to keep your money safe.
+    </p>
+</div>
+
 </section>
 
 <section class="features">
@@ -42,15 +51,13 @@
 </section>
 
 <section style="padding:4rem; background:var(--dark); text-align:center;">
-    <h2 style="font-size:2rem; font-weight:700; margin-bottom:1rem; background:linear-gradient(135deg, var(--text), var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
-        How It Works
-    </h2>
+    <h2 style="font-size:2rem; font-weight:700; margin-bottom:1rem; background:linear-gradient(135deg, var(--text), var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">How It Works</h2>
     <p style="color:var(--text-muted); margin-bottom:3rem;">Three simple steps to know if your money is safe</p>
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; max-width:900px; margin:0 auto;">
         <div style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:2rem;">
             <div style="font-size:2.5rem; margin-bottom:1rem;">📱</div>
             <h3 style="margin-bottom:0.5rem;">1. Create Account</h3>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Sign up in seconds. No credit card needed. Just your email and a password.</p>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Sign up in seconds. No credit card needed.</p>
         </div>
         <div style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:2rem;">
             <div style="font-size:2.5rem; margin-bottom:1rem;">⚡</div>
@@ -64,16 +71,14 @@
         </div>
     </div>
     <div style="margin-top:3rem;">
-        <a href="/signup" class="btn-primary" style="display:inline-flex;">
-            <i class="fas fa-user-plus"></i> Create Free Account
+        <a href="/login" class="btn-primary" style="display:inline-flex;">
+            <i class="fas fa-sign-in-alt"></i> Login to Get Started
         </a>
     </div>
 </section>
 
 <section style="padding:4rem; background:var(--dark2); text-align:center;">
-    <h2 style="font-size:1.8rem; font-weight:700; margin-bottom:1rem; color:var(--text);">
-        Common Fraud We Catch
-    </h2>
+    <h2 style="font-size:1.8rem; font-weight:700; margin-bottom:1rem; color:var(--text);">Common Fraud We Catch</h2>
     <p style="color:var(--text-muted); margin-bottom:2.5rem;">These are the patterns UPI Shield is trained to detect</p>
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; max-width:900px; margin:0 auto;">
         <div style="background:var(--card); border:1px solid rgba(255,68,68,0.3); border-radius:16px; padding:1.5rem; text-align:left;">
