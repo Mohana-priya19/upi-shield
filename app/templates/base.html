@@ -15,7 +15,9 @@
             <span>UPI Shield</span>
         </div>
         <ul class="nav-links">
-            <li><a href="/" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a></li>
+            {% if not current_user.is_authenticated %}
+                <li><a href="/" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a></li>
+            {% endif %}
             {% if current_user.is_authenticated %}
                 <li><a href="/about" class="{% if request.endpoint == 'about' %}active{% endif %}">About</a></li>
                 <li><a href="/predict_page" class="{% if request.endpoint == 'predict_page' %}active{% endif %}">Detect Fraud</a></li>
