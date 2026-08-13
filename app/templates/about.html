@@ -1,60 +1,98 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section style="padding:4rem 4rem 2rem; background:var(--dark2); text-align:center;">
-    <div style="width:80px; height:80px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 1.5rem; box-shadow:0 0 30px rgba(108,99,255,0.4);">
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(108,99,255,0.4); }
+    50% { box-shadow: 0 0 60px rgba(0,212,255,0.6); }
+}
+@keyframes countUp {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.animate-1 { animation: fadeInUp 0.6s ease both; }
+.animate-2 { animation: fadeInUp 0.6s ease 0.2s both; }
+.animate-3 { animation: fadeInUp 0.6s ease 0.4s both; }
+.animate-4 { animation: fadeInUp 0.6s ease 0.6s both; }
+.animate-5 { animation: fadeInUp 0.6s ease 0.8s both; }
+.hover-card {
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+.hover-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 30px rgba(108,99,255,0.3);
+}
+</style>
+
+<!-- Hero -->
+<section style="padding:4rem 4rem 2rem; background:radial-gradient(ellipse at top, #1a1a4e 0%, var(--dark2) 70%); text-align:center;">
+    <div class="animate-1" style="width:90px; height:90px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; margin:0 auto 1.5rem; animation: pulse 2s infinite;">
         🛡️
     </div>
-    <h1 style="font-size:2.5rem; font-weight:800; background:linear-gradient(135deg, var(--text), var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:0.5rem;">UPI Shield</h1>
-    <p style="color:var(--text-muted); font-size:1.1rem;">Your trusted layer of protection for every UPI transaction</p>
+    <h1 class="animate-2" style="font-size:2.8rem; font-weight:800; background:linear-gradient(135deg, var(--text), var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:0.5rem;">UPI Shield</h1>
+    <p class="animate-3" style="color:var(--text-muted); font-size:1.1rem; margin-bottom:2rem;">Your trusted layer of protection for every UPI transaction</p>
+
+    <div class="animate-4" style="max-width:750px; margin:0 auto 2rem; padding:1.5rem 2rem; background:rgba(108,99,255,0.08); border:1px solid var(--border); border-radius:16px;">
+        <p style="color:var(--text-muted); font-size:1rem; line-height:1.8; margin:0;">
+            In India, UPI processes over <strong style="color:var(--secondary);">10 billion transactions every month</strong>. As digital payments grow, so does fraud. UPI Shield is an AI-powered security system that scans every transaction in real time — catching fraud before your money is gone, and explaining exactly why it was flagged.
+        </p>
+    </div>
 </section>
 
-<section style="padding:3rem 4rem; background:var(--dark2);">
-    <div style="max-width:1000px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem;">
-        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; text-align:center;">
+<!-- Stats -->
+<section style="padding:2rem 4rem 3rem; background:var(--dark2);">
+    <div class="animate-4" style="max-width:1000px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem;">
+        <div class="hover-card" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; text-align:center;">
             <div style="font-size:2rem; margin-bottom:0.5rem;">🔒</div>
-            <h3 style="font-size:1.5rem; font-weight:800; color:var(--secondary);">98.2%</h3>
+            <h3 style="font-size:1.8rem; font-weight:800; color:var(--secondary);">98.2%</h3>
             <p style="color:var(--text-muted); font-size:0.85rem;">Fraud Detection Rate</p>
         </div>
-        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; text-align:center;">
+        <div class="hover-card" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; text-align:center;">
             <div style="font-size:2rem; margin-bottom:0.5rem;">⚡</div>
-            <h3 style="font-size:1.5rem; font-weight:800; color:var(--secondary);">&lt;1 Second</h3>
+            <h3 style="font-size:1.8rem; font-weight:800; color:var(--secondary);">&lt;1s</h3>
             <p style="color:var(--text-muted); font-size:0.85rem;">Real-Time Detection Speed</p>
         </div>
-        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; text-align:center;">
+        <div class="hover-card" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; text-align:center;">
             <div style="font-size:2rem; margin-bottom:0.5rem;">📊</div>
-            <h3 style="font-size:1.5rem; font-weight:800; color:var(--secondary);">2.77M</h3>
+            <h3 style="font-size:1.8rem; font-weight:800; color:var(--secondary);">2.77M</h3>
             <p style="color:var(--text-muted); font-size:0.85rem;">Transactions Trained On</p>
         </div>
     </div>
 </section>
 
+<!-- How We Protect -->
 <section style="padding:3rem 4rem; background:var(--dark);">
     <div style="max-width:1000px; margin:0 auto;">
-        <h2 style="font-size:1.8rem; font-weight:700; margin-bottom:2rem; color:var(--text);">How We Protect You</h2>
+        <h2 class="animate-3" style="font-size:1.8rem; font-weight:700; margin-bottom:0.5rem; color:var(--text);">How We Protect You</h2>
+        <p style="color:var(--text-muted); margin-bottom:2rem;">Every layer of UPI Shield works together to keep your money safe</p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
-            <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+            <div class="hover-card" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
                 <div style="width:45px; height:45px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">🔍</div>
                 <div>
                     <h4 style="margin-bottom:0.3rem;">Real-Time Scanning</h4>
                     <p style="color:var(--text-muted); font-size:0.9rem;">Every transaction is scanned instantly against millions of known fraud patterns before you lose your money.</p>
                 </div>
             </div>
-            <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+            <div class="hover-card" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
                 <div style="width:45px; height:45px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">💡</div>
                 <div>
                     <h4 style="margin-bottom:0.3rem;">Explainable Alerts</h4>
                     <p style="color:var(--text-muted); font-size:0.9rem;">We don't just flag fraud — we tell you exactly why. Account drained? Late night transfer? You'll know.</p>
                 </div>
             </div>
-            <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+            <div class="hover-card" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
                 <div style="width:45px; height:45px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">🧠</div>
                 <div>
                     <h4 style="margin-bottom:0.3rem;">AI That Learns</h4>
                     <p style="color:var(--text-muted); font-size:0.9rem;">Two AI models working together — one learns from past fraud, one catches brand new patterns never seen before.</p>
                 </div>
             </div>
-            <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+            <div class="hover-card" style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
                 <div style="width:45px; height:45px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">📡</div>
                 <div>
                     <h4 style="margin-bottom:0.3rem;">Always Monitoring</h4>
@@ -65,21 +103,23 @@
     </div>
 </section>
 
+<!-- Fraud We Catch -->
 <section style="padding:3rem 4rem; background:var(--dark2);">
     <div style="max-width:1000px; margin:0 auto;">
-        <h2 style="font-size:1.8rem; font-weight:700; margin-bottom:2rem; color:var(--text);">Fraud We Catch</h2>
+        <h2 style="font-size:1.8rem; font-weight:700; margin-bottom:0.5rem; color:var(--text);">Fraud We Catch</h2>
+        <p style="color:var(--text-muted); margin-bottom:2rem;">The most dangerous UPI fraud patterns — all detected automatically</p>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;">
-            <div style="background:var(--card); border:1px solid rgba(255,68,68,0.3); border-radius:16px; padding:1.5rem;">
+            <div class="hover-card" style="background:var(--card); border:1px solid rgba(255,68,68,0.3); border-radius:16px; padding:1.5rem;">
                 <div style="font-size:1.8rem; margin-bottom:0.5rem;">🚨</div>
                 <h4 style="color:var(--danger); margin-bottom:0.4rem;">Account Draining</h4>
                 <p style="color:var(--text-muted); font-size:0.85rem;">Full balance transferred to zero in a single transaction — the most common UPI fraud pattern.</p>
             </div>
-            <div style="background:var(--card); border:1px solid rgba(255,68,68,0.3); border-radius:16px; padding:1.5rem;">
+            <div class="hover-card" style="background:var(--card); border:1px solid rgba(255,68,68,0.3); border-radius:16px; padding:1.5rem;">
                 <div style="font-size:1.8rem; margin-bottom:0.5rem;">🌙</div>
                 <h4 style="color:var(--danger); margin-bottom:0.4rem;">Late Night Fraud</h4>
                 <p style="color:var(--text-muted); font-size:0.85rem;">Suspicious transfers between midnight and 5 AM when victims are asleep and unaware.</p>
             </div>
-            <div style="background:var(--card); border:1px solid rgba(255,68,68,0.3); border-radius:16px; padding:1.5rem;">
+            <div class="hover-card" style="background:var(--card); border:1px solid rgba(255,68,68,0.3); border-radius:16px; padding:1.5rem;">
                 <div style="font-size:1.8rem; margin-bottom:0.5rem;">💸</div>
                 <h4 style="color:var(--danger); margin-bottom:0.4rem;">Abnormal Amounts</h4>
                 <p style="color:var(--text-muted); font-size:0.85rem;">Transaction amounts far above normal spending behavior — a strong indicator of unauthorized access.</p>
@@ -88,6 +128,7 @@
     </div>
 </section>
 
+<!-- CTA -->
 <section style="padding:3rem 4rem; background:var(--dark); text-align:center;">
     <div style="max-width:600px; margin:0 auto;">
         <h2 style="font-size:1.8rem; font-weight:700; margin-bottom:1rem; color:var(--text);">Ready to Check a Transaction?</h2>
