@@ -17,10 +17,10 @@ login_manager.login_view = 'login'
 
 model = joblib.load(r'C:\Users\LENOVO\Downloads\upi-shield\models\xgboost_baseline.pkl')
 
-# ── User Model ──
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
+    phone = db.Column(db.String(20))
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(200))
 
@@ -28,7 +28,6 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# ── Public Routes ──
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -49,14 +48,23 @@ def login():
 def signup():
     if request.method == 'POST':
         name = request.form.get('name')
+        phone = request.form.get('phone')
         email = request.form.get('email')
         password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if password != confirm_password:
+            flash('Passwords do not match. Please try again.')
+            return redirect(url_for('signup'))
+
         existing = User.query.filter_by(email=email).first()
         if existing:
             flash('Email already registered. Please login.')
             return redirect(url_for('login'))
+
         new_user = User(
             name=name,
+            phone=phone,
             email=email,
             password=generate_password_hash(password)
         )
@@ -72,7 +80,6 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-# ── Protected Routes ──
 @app.route('/predict_page')
 @login_required
 def predict_page():
@@ -88,7 +95,6 @@ def dashboard():
 def about():
     return render_template('about.html')
 
-# ── API ──
 @app.route('/api/predict', methods=['POST'])
 @login_required
 def predict():
