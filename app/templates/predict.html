@@ -1,86 +1,118 @@
 {% extends "base.html" %}
 {% block content %}
 
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.animate { animation: fadeInUp 0.5s ease both; }
+.result-animate { animation: slideIn 0.4s ease both; }
+</style>
+
 <section class="predict-section">
-    <h1>Fraud Detection</h1>
-    <p class="subtitle">Enter transaction details to check for fraud in real time</p>
+
+    <!-- Greeting -->
+    <div style="text-align:center; margin-bottom:1rem;" class="animate">
+        <p style="color:var(--secondary); font-size:1rem; font-weight:600;">
+            👋 Welcome back, {{ current_user.name }}
+        </p>
+    </div>
+
+    <h1 class="animate">Check Your Transaction</h1>
+    <p class="subtitle animate">Enter your UPI transaction details below — we'll tell you if it's safe in under a second</p>
+
+    <!-- Quick Fill Buttons -->
+    <div style="display:flex; gap:1rem; justify-content:center; margin-bottom:2rem;" class="animate">
+        <button onclick="fillFraud()" style="background:rgba(255,68,68,0.1); border:1px solid var(--danger); color:var(--danger); padding:0.5rem 1.2rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
+            🚨 Try Fraud Example
+        </button>
+        <button onclick="fillSafe()" style="background:rgba(0,255,136,0.1); border:1px solid var(--success); color:var(--success); padding:0.5rem 1.2rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">
+            ✅ Try Safe Example
+        </button>
+    </div>
 
     <div class="predict-container">
-        <div class="form-card">
+        <div class="form-card animate">
             <h3><i class="fas fa-edit"></i> Transaction Details</h3>
 
             <div class="form-group">
                 <label>Transaction Type</label>
                 <select id="type_encoded">
-                    <option value="0">CASH_OUT</option>
-                    <option value="1">TRANSFER</option>
+                    <option value="0">CASH_OUT — Withdrawing money</option>
+                    <option value="1">TRANSFER — Sending to another account</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>Transaction Amount (₹)</label>
+                <label>How much money was sent? (₹)</label>
                 <input type="number" id="amount" placeholder="e.g. 450000">
             </div>
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Origin Balance Before (₹)</label>
+                    <label>Your balance BEFORE sending (₹)</label>
                     <input type="number" id="oldbalanceOrg" placeholder="e.g. 450000">
                 </div>
                 <div class="form-group">
-                    <label>Origin Balance After (₹)</label>
+                    <label>Your balance AFTER sending (₹)</label>
                     <input type="number" id="newbalanceOrig" placeholder="e.g. 0">
                 </div>
             </div>
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Destination Balance Before (₹)</label>
+                    <label>Receiver's balance BEFORE (₹)</label>
                     <input type="number" id="oldbalanceDest" placeholder="e.g. 0">
                 </div>
                 <div class="form-group">
-                    <label>Destination Balance After (₹)</label>
+                    <label>Receiver's balance AFTER (₹)</label>
                     <input type="number" id="newbalanceDest" placeholder="e.g. 450000">
                 </div>
             </div>
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Hour of Transaction (0-23)</label>
+                    <label>What time did this happen? (0 = midnight, 23 = 11PM)</label>
                     <input type="number" id="hour" placeholder="e.g. 3" min="0" max="23">
                 </div>
                 <div class="form-group">
-                    <label>Day</label>
+                    <label>Day number</label>
                     <input type="number" id="day" placeholder="e.g. 1" min="0">
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Is Weekend?</label>
+                <label>Did this happen on a weekend?</label>
                 <select id="is_weekend">
-                    <option value="0">No (Weekday)</option>
-                    <option value="1">Yes (Weekend)</option>
+                    <option value="0">No — Weekday</option>
+                    <option value="1">Yes — Weekend</option>
                 </select>
             </div>
 
             <button class="predict-btn" onclick="predictFraud()">
-                <i class="fas fa-search"></i> Analyze Transaction
+                <i class="fas fa-search"></i> Analyze This Transaction
             </button>
         </div>
 
         <div class="result-card" id="resultCard">
             <div class="result-placeholder" id="placeholder">
                 <i class="fas fa-shield-alt"></i>
-                <p>Enter transaction details and click Analyze to see the fraud prediction result here.</p>
+                <p>Fill in your transaction details and click Analyze — your result will appear here instantly.</p>
             </div>
 
             <div class="loader" id="loader"></div>
 
-            <div class="result-content" id="resultContent">
+            <div class="result-content result-animate" id="resultContent" style="display:none; flex-direction:column; align-items:center; gap:0.8rem; width:100%;">
                 <div class="result-icon" id="resultIcon"></div>
                 <div class="result-verdict" id="resultVerdict"></div>
+
                 <div style="width:100%">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.3rem">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.3rem;">
                         <span>Fraud Probability</span>
                         <span id="probText"></span>
                     </div>
@@ -88,8 +120,14 @@
                         <div class="probability-fill" id="probBar" style="width:0%"></div>
                     </div>
                 </div>
+
                 <div class="risk-badge" id="riskBadge"></div>
-                <div style="margin-top:1.5rem; padding:1rem; background:var(--dark3); border-radius:12px; text-align:left; font-size:0.85rem; color:var(--text-muted);" id="explanation"></div>
+
+                <div style="width:100%; padding:1rem; background:var(--dark3); border-radius:12px; text-align:left; font-size:0.85rem; color:var(--text-muted);" id="explanation"></div>
+
+                <button onclick="downloadResult()" style="margin-top:0.5rem; background:transparent; border:1px solid var(--border); color:var(--text-muted); padding:0.5rem 1.2rem; border-radius:8px; cursor:pointer; font-size:0.85rem; transition:all 0.3s;">
+                    <i class="fas fa-download"></i> Save Result
+                </button>
             </div>
         </div>
     </div>
@@ -99,6 +137,30 @@
 
 {% block scripts %}
 <script>
+function fillFraud() {
+    document.getElementById('type_encoded').value = '1';
+    document.getElementById('amount').value = '450000';
+    document.getElementById('oldbalanceOrg').value = '450000';
+    document.getElementById('newbalanceOrig').value = '0';
+    document.getElementById('oldbalanceDest').value = '0';
+    document.getElementById('newbalanceDest').value = '450000';
+    document.getElementById('hour').value = '3';
+    document.getElementById('day').value = '1';
+    document.getElementById('is_weekend').value = '0';
+}
+
+function fillSafe() {
+    document.getElementById('type_encoded').value = '0';
+    document.getElementById('amount').value = '5000';
+    document.getElementById('oldbalanceOrg').value = '50000';
+    document.getElementById('newbalanceOrig').value = '45000';
+    document.getElementById('oldbalanceDest').value = '10000';
+    document.getElementById('newbalanceDest').value = '15000';
+    document.getElementById('hour').value = '14';
+    document.getElementById('day').value = '5';
+    document.getElementById('is_weekend').value = '0';
+}
+
 async function predictFraud() {
     const payload = {
         amount: parseFloat(document.getElementById('amount').value) || 0,
@@ -128,9 +190,6 @@ async function predictFraud() {
     const content = document.getElementById('resultContent');
     const card = document.getElementById('resultCard');
     content.style.display = 'flex';
-    content.style.flexDirection = 'column';
-    content.style.alignItems = 'center';
-    content.style.gap = '0.8rem';
 
     if (data.fraud_detected) {
         card.className = 'result-card result-fraud';
@@ -143,17 +202,44 @@ async function predictFraud() {
     }
 
     document.getElementById('probText').textContent = data.fraud_probability + '%';
-    document.getElementById('probBar').style.width = data.fraud_probability + '%';
+    setTimeout(() => {
+        document.getElementById('probBar').style.width = data.fraud_probability + '%';
+    }, 100);
     document.getElementById('riskBadge').textContent = 'Risk Level: ' + data.risk_level;
     document.getElementById('riskBadge').className = 'risk-badge risk-' + data.risk_level;
 
     document.getElementById('explanation').innerHTML = `
-        <strong style="color:var(--secondary)">Analysis Summary</strong><br><br>
-        Fraud Probability: <strong>${data.fraud_probability}%</strong><br>
-        Risk Level: <strong>${data.risk_level}</strong><br>
-        Balance Drained: <strong>${payload.newbalanceOrig === 0 ? 'Yes — High Risk Signal' : 'No'}</strong><br>
-        Transaction Hour: <strong>${payload.hour}:00 ${payload.hour >= 0 && payload.hour <= 6 ? '⚠️ Late Night' : '✅ Business Hours'}</strong>
+        <strong style="color:var(--secondary)">Why this result?</strong><br><br>
+        🔢 Fraud Probability: <strong>${data.fraud_probability}%</strong><br>
+        ⚠️ Risk Level: <strong>${data.risk_level}</strong><br>
+        💰 Account drained to zero: <strong>${payload.newbalanceOrig === 0 ? 'Yes — Major Red Flag' : 'No — Normal'}</strong><br>
+        🕐 Transaction time: <strong>${payload.hour}:00 ${payload.hour >= 0 && payload.hour <= 6 ? '⚠️ Late Night — Suspicious' : '✅ Normal Hours'}</strong><br>
+        💸 Amount sent: <strong>₹${payload.amount.toLocaleString()}</strong>
     `;
+
+    window._lastResult = { data, payload };
+}
+
+function downloadResult() {
+    if (!window._lastResult) return;
+    const { data, payload } = window._lastResult;
+    const text = `UPI Shield — Transaction Analysis Report
+=====================================
+Verdict: ${data.verdict}
+Fraud Probability: ${data.fraud_probability}%
+Risk Level: ${data.risk_level}
+Amount: ₹${payload.amount}
+Account Drained: ${payload.newbalanceOrig === 0 ? 'Yes' : 'No'}
+Transaction Hour: ${payload.hour}:00
+=====================================
+Generated by UPI Shield`;
+
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'upi-shield-result.txt';
+    a.click();
 }
 </script>
 {% endblock %}
